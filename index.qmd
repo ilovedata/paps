@@ -32,3 +32,21 @@ library(here)           # file pathways
 |:----------|:--------------|:-----|
 | `paps_mean.feather` | `./data/make_data_paps_mean_feather.qmd` | 초중등 개인 자료를 학교별, 연도별, 학년별, 남여별의  평균값으로 요약한 자료 |
 
+### 프로그램 공유 주소 
+
+다음은 프로그램의 공유하는 github  주소이다 .
+
+[https://github.com/ilovedata/paps](https://github.com/ilovedata/paps)
+
+::: {.callout-caution}
+
+### 주의사항 
+
+
+- github 에는 R project  관련 화일이 없으므로 프로그램을 사용하여면 자신의 local computer 에서 R project 를 만들어야 한다.
+
+- github 에는 data 와 output 폴더에 데이터 및 결과 화일이 없으므로 위에서 설명한대로 feather data 를 적절한 folder 에 저장해야 한다.
+
+- 프로그램을 전체 rendering 할 떄 시간이 많이 소요될 수 있음 
+
+:::

@@ -12,7 +12,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# R 
+# R
 _build
 _book
 data/feather/
@@ -21,3 +21,5 @@ data/Rdata/
 .quarto/
 *.Rproj
 *.Rproj.user
+/.quarto/
+_freeze/
