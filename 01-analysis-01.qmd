@@ -1,0 +1,145 @@
+# 왕복오래달리기
+
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+
+왕복오래달리기(심폐지구력)에 대한 사전분석
+
+## 경기도- 여자
+
+## 자료읽기
+```{r}
+
+df_41_e_F <- df_41_e %>% dplyr::filter(SXDS_SC_CD=='여성')
+df_41_e_M <- df_41_e %>% dplyr::filter(SXDS_SC_CD=='남성')
+df_41_m_F <- df_41_m %>% dplyr::filter(SXDS_SC_CD=='여성')
+df_41_m_M <- df_41_m %>% dplyr::filter(SXDS_SC_CD=='남성')
+df_41_h_F <- df_41_h %>% dplyr::filter(SXDS_SC_CD=='여성')
+df_41_h_M <- df_41_h %>% dplyr::filter(SXDS_SC_CD=='남성')
+```
+
+## 연도별 학년별 학생수 
+
+```{r}
+df_41_t_e_01 <- make_count_table(df_41_e_F)
+colnames(df_41_t_e_01) <- col_n_e
+print_df(df_41_t_e_01, "초등학교 학생수")
+```
+
+```{r}
+df_41_t_m_01 <- make_count_table(df_41_m_F)
+colnames(df_41_t_m_01) <- col_n_m
+print_df(df_41_t_m_01, "중학교 학생수")
+```
+
+
+```{r}
+df_41_t_h_01 <- make_count_table(df_41_h_F)
+colnames(df_41_t_h_01) <- col_n_m
+print_df(df_41_t_h_01, "고등학교 학생수")
+```
+
+
+## 심폐지구력 - 여자   
+```{r,echo=FALSE, message=FALSE, warning=FALSE,  results = 'asis'}
+
+col_names_demo <- c("SHL_CD_NM", "AYR",  "GRD",  "SXDS_SC_CD", "STU_HGHT",  "STU_BWGHT",  "PAPS_EVL_SCR", "PAPS_EVL_CLA_CD")
+var_target <- c("SHLR_NTS", "MIN_SEC_LRW_HR", "CPM_SAI_EVL_SCR", "CPM_SAI_EVL_CLA_CD")
+
+df1 <- df_41_e_F %>% dplyr::select(AYR, GRD, STU_HGHT, STU_BWGHT, PAPS_EVL_SCR, PAPS_EVL_CLA_CD, SHLR_NTS, MIN_SEC_LRW_HR, CPM_SAI_EVL_SCR, CPM_SAI_EVL_CLA_CD) %>% dplyr::filter(!is.na(SHLR_NTS)) %>% dplyr::mutate(school = "초등")
+
+df2 <- df_41_m_F %>% dplyr::select(AYR, GRD, STU_HGHT, STU_BWGHT, PAPS_EVL_SCR, PAPS_EVL_CLA_CD, SHLR_NTS, MIN_SEC_LRW_HR, CPM_SAI_EVL_SCR, CPM_SAI_EVL_CLA_CD) %>% dplyr::filter(!is.na(SHLR_NTS)) %>% dplyr::mutate(school = "중등")
+
+df3 <- df_41_h_F %>% dplyr::select(AYR, GRD, STU_HGHT, STU_BWGHT, PAPS_EVL_SCR, PAPS_EVL_CLA_CD, SHLR_NTS, MIN_SEC_LRW_HR, CPM_SAI_EVL_SCR, CPM_SAI_EVL_CLA_CD) %>% dplyr::filter(!is.na(SHLR_NTS)) %>% dplyr::mutate(school = "고등")
+
+df_4 <- rbind(df1,df2,df3) %>% dplyr::mutate(time = factor(paste(school,GRD),  levels = grade_levels )) %>%       
+                        dplyr::relocate(school, time, .after = AYR) 
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,  results = 'asis'}
+tab1 <- tableby( time ~ SHLR_NTS , data=df_4, strata = AYR, control=mycontrols)
+summary(tab1)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,  results = 'asis'}
+tab2 <- tableby( AYR ~ SHLR_NTS , data=df_4, strata = time, control=mycontrols)
+summary(tab2)
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,  results = 'asis'}
+# 평균걸음수 백분위 
+myquant <- seq(0,1,0.05)
+qqname <- paste0("Q",myquant*100)
+myquant100 <- seq(0.05,0.95,0.05)*100
+cutyear <- seq(2009,2022,1)
+
+df_5 <- df_4 %>% group_by(time, AYR) %>% summarise_at(c("SHLR_NTS"),quantile, probs = myquant) %>%
+  dplyr::mutate(qq = qqname) %>%
+  pivot_wider(names_from = AYR, values_from = SHLR_NTS) 
+  
+df_5 %>% kable(caption = "백분위수")
+
+```
+
+
+## 백분위수 - 여자 - 초등  4학년 
+
+```{r}
+safe_gamlss1 <- safely(quietly(gamlss))
+safe_quantSheets1 <- safely(quietly(quantSheets))
+```
+
+```{r}
+df_lms <- df_4 %>% dplyr::filter(time == "초등 4") %>% dplyr::filter(!is.na(SHLR_NTS)) %>% dplyr::filter(SHLR_NTS >0 ) %>% dplyr::select(AYR, SHLR_NTS) 
+
+```
+
+
+## 연도별 분포 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(df_lms, aes(as.factor(AYR), SHLR_NTS )) +  
+  geom_boxplot() +
+  labs(x="연도", y="왕복오래달리기") 
+```
+
+### 표본 평활방법을 적용하여 centile 계산   
+
+```{r}
+ppp<-findPower(df_lms$SHLR_NTS,df_lms$AYR)
+qs1 <- safe_quantSheets1(SHLR_NTS, AYR, data = df_lms, cent = myquant100, x.lambda = 1, p.lambda = 10,logit = TRUE, power = ppp)
+qs1.res <- t(predict(qs1$result$result, newdata=cutyear))
+
+```
+
+```{r}
+final_quan_M <- round( qs1.res,0)
+colnames(final_quan_M ) <-  paste("Y",unique(df_lms$AYR),sep="")
+final_quan_M %>% kbl() %>% kable_styling(full_width = F)
+```
+
+
+### LMS 방법을 적용하여 centile 계산   
+
+```{r}
+myres <- gamlss(SHLR_NTS~pb(AYR), sigma.formula=~pb(AYR), family=GA, data=df_lms)
+centiles(myres,xvar=df_lms$AYR, cent=myquant100, legend = FALSE, xlab="연도", ylab = "왕복오래달리기")
+```
+
+
+```{r}
+cent_myres <- centiles.pred(myres, xname = 'AYR', xvalues = cutyear, cent= myquant100 )
+final_quan_M <- round( t(cent_myres)[-1,],0)
+colnames(final_quan_M ) <-  paste("LMS",unique(df_lms$AYR),sep="")
+final_quan_M %>% kbl() %>% kable_styling(full_width = F)
+
+```
+

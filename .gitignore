@@ -1,0 +1,23 @@
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# R 
+_build
+_book
+data/feather/
+data/outputs/
+data/Rdata/
+.quarto/
+*.Rproj
+*.Rproj.user

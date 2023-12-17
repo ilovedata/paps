@@ -1,0 +1,146 @@
+# PAPS의 종목 선택
+
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+
+## 종목 선택 현황
+
+- 2010년 이전 자료는 학교의 수가 상대적으로 적어서 비교가 어려우므로 2011년 부터 2022년 까지  12년 자료를 분석
+- 각 학교에서 해당 년도에 선택한 종목은 다음과 같은 기준으로 정함
+  + 같은 년도에 두 개 이상의 종목을 측정한 경우가 있는 경우 가장 많이 측정한 종목을 선정
+  + 같은 년도에 두 개의 종목을 측정한 경우는 많으나 실제로 선택한 종목에 비해 다른 종목은 횟수가 매우 작으므로 전학생과 같은 특별한 경우일 것으로 보임
+  + 같은 년도에 학년마다 선택한 종목이 다를 수 있는 경우에 대비하여 가장 낮은 학년(초등 4, 중증 1, 고등 1)이 선택한 종목으로 학교의 선택 종목을 정함
+  
+  
+
+### 자료 읽기
+
+```{r}
+dirpath <- here("data","feather","paps_mean.feather")
+df_sch_mean <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+
+tbl_0 <- cal_percent_by_2(df_sch_mean)
+```
+
+###  학교별 요약 원자료
+
+다음과 같이 연도별, 학교별, 학년별, 남여별로 선택한 종목의 인원과 측정치의 평균으로 구정된 자료를 생성하였음
+
+
+
+```{r}
+head(df_sch_mean,5) |> 
+    flextable() |> 
+    autofit()  |>
+    theme_booktabs(bold_header = TRUE) |>
+    colformat_num(big.mark = "", decimal.mark = ".") |>
+    fix_border_issues()
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+## 종목 선택 현황
+
+- 각 체력 요인별로 선택한 학교의 수를 나타냄
+- 각 체력 요인별로 선택한 학교의 비율을 페센트로 나타냄
+- 초중등 학교별오 연도에 따른 선택 종목의 변화를 표로 나타냄
+
+### 초등학교 - 학교 수
+
+
+
+```{r}
+tbl_e_n <- tbl_0[[1]] %>% dplyr::filter(`학교` == '초등학교')
+tbl_e_p <- tbl_0[[2]] %>% dplyr::filter(`학교` == '초등학교')
+```
+
+
+```{r}
+make_table_2(tbl_e_n, "chap1-tbl_e_n")
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 초등학교 - 학교 비율(페센트)
+
+
+
+```{r}
+make_table_2(tbl_e_p, "chap1-tbl_e_p")
+
+```
+
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+
+### 중학교 - 학교 수
+
+```{r}
+tbl_e_n <- tbl_0[[1]] %>% dplyr::filter(`학교` == '중학교')
+tbl_e_p <- tbl_0[[2]] %>% dplyr::filter(`학교` == '중학교')
+```
+
+
+```{r}
+make_table_2(tbl_e_n,  "chap1-tbl_m_n")
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 중학교 - 학교 비율
+
+```{r}
+make_table_2(tbl_e_p,  "chap1-tbl_m_p")
+
+```
+
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+
+### 고등학교 - 학교 수
+
+```{r}
+tbl_e_n <- tbl_0[[1]] %>% dplyr::filter(`학교` == '고등학교')
+tbl_e_p <- tbl_0[[2]] %>% dplyr::filter(`학교` == '고등학교')
+```
+
+
+```{r}
+make_table_2(tbl_e_n,  "chap1-tbl_h_n")
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 고등학교 - 학교 비율
+
+```{r}
+make_table_2(tbl_e_p,  "chap1-tbl_h_p")
+
+```
+
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+

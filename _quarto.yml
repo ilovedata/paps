@@ -1,0 +1,23 @@
+project:
+  type: book
+
+book:
+  title: "PAPS analysis"
+  author: "Yonghee Lee"
+  date: "12/10/2023"
+  chapters:
+    - index.qmd
+    - 01-analysis-00.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    embed_resources: true
+  docx: 
+    toc: false
+    reference-doc: custom-reference-doc.docx
+
+
