@@ -1,5 +1,8 @@
 project:
   type: book
+  
+execute:
+  freeze: auto  # re-render only when source changes  
 
 book:
   title: "PAPS analysis"
@@ -8,6 +11,16 @@ book:
   chapters:
     - index.qmd
     - 01-analysis-00.qmd
+    - 01-analysis-01-A.qmd
+    - 01-analysis-01-B.qmd
+    - 01-analysis-01-C.qmd
+    - 01-analysis-01-D.qmd
+    - 01-analysis-02.qmd
+    - 01-analysis-02-A.qmd
+    - 01-analysis-02-B.qmd
+    - 01-analysis-02-C.qmd
+    - 01-analysis-02-D.qmd
+    - 01-analysis-02-BMI.qmd
     - references.qmd
 
 bibliography: references.bib

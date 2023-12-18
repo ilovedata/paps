@@ -53,6 +53,8 @@ if(isword) cat("\n", wordnewpage, "\n")
 - 각 체력 요인별로 선택한 학교의 비율을 페센트로 나타냄
 - 초중등 학교별오 연도에 따른 선택 종목의 변화를 표로 나타냄
 
+## 초등학교
+
 ### 초등학교 - 학교 수
 
 
@@ -85,6 +87,7 @@ make_table_2(tbl_e_p, "chap1-tbl_e_p")
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+## 중학교
 
 ### 중학교 - 학교 수
 
@@ -114,6 +117,7 @@ make_table_2(tbl_e_p,  "chap1-tbl_m_p")
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+## 고등학교
 
 ### 고등학교 - 학교 수
 

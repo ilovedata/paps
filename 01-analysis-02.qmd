@@ -1,0 +1,70 @@
+# PAPS 등급
+
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+
+### 자료 읽기
+
+```{r}
+dirpath <- here("data","feather","paps_cd_summ.feather")
+df_cd <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+```
+
+## PAPS 등급 - 남자
+
+```{r}
+res <- summ_cd_plot_table_sex_all(df_cd, "PAPS_EVL_CLA_CD", "남성", "chapter3")
+```
+
+```{r}
+res[[1]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+```{r}
+res[[2]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+```{r}
+res[[3]]
+```
+
+
+## PAPS 등급 - 여자
+
+```{r}
+res <- summ_cd_plot_table_sex_all(df_cd, "PAPS_EVL_CLA_CD", "여성", "chapter3")
+```
+
+```{r}
+res[[1]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+```{r}
+res[[2]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+```{r}
+res[[3]]
+```

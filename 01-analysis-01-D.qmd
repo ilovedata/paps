@@ -1,0 +1,72 @@
+# PAPS의 체력항목 분석 - 순발력
+
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+
+## PAPS의 체력항목 - 순발력
+
+### 자료 읽기
+
+```{r}
+dirpath <- here("data","feather","paps_mean.feather")
+df_sch_mean <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+df_sch_mean <- df_sch_mean %>% dplyr::filter(`년도` >= 2011 ) 
+df_sch_mean$`년도` <-  factor(df_sch_mean$`년도`)
+```
+
+
+### 50m달리기 - 남자
+
+
+```{r}
+res <- summ_stat_plot_itemwise_sex_all(df_sch_mean, "50m달리기", "남성", "chap2")
+res[[1]]
+res[[2]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 50m달리기 - 여자
+
+```{r}
+res <- summ_stat_plot_itemwise_sex_all(df_sch_mean, "50m달리기", "여성", "chap2")
+res[[1]]
+res[[2]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 제자리멀리뛰기 - 남자
+
+
+```{r}
+res <- summ_stat_plot_itemwise_sex_all(df_sch_mean, "제자리멀리뛰기", "남성", "chap2")
+res[[1]]
+res[[2]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 제자리멀리뛰기 - 여자
+
+```{r}
+res <- summ_stat_plot_itemwise_sex_all(df_sch_mean, "제자리멀리뛰기", "여성", "chap2")
+res[[1]]
+res[[2]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```

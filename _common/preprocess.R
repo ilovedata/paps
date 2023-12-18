@@ -5,24 +5,17 @@
 
 
 ## read arrow data
-dirpath <- here("data","feather","E_final.feather")
-df_e_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
-dirpath <- here("data","feather","M_final.feather")
-df_m_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
-dirpath <- here("data","feather","H_final.feather")
-df_h_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+#dirpath <- here("data","feather","E_final.feather")
+#df_e_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+#dirpath <- here("data","feather","M_final.feather")
+#df_m_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+#dirpath <- here("data","feather","H_final.feather")
+#df_h_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
 
-df_e_01 <- df_e_01[,1:31]
-df_m_01 <- df_m_01[,1:31]
-df_h_01 <- df_h_01[,1:31]
+#df_e_01 <- df_e_01[,1:31]
+#df_m_01 <- df_m_01[,1:31]
+#df_h_01 <- df_h_01[,1:31]
 
-## var_info
-
-var_paps_info <- read_excel(here("data","PAPS_col_definition.xlsx"))
-sido_info <- read_excel(here("data","sido_code.xlsx"))
-
-var_change_vector_PAPS <- deframe(var_paps_info[,c(4,2)])
-var_change_vector_SIDO <- deframe(sido_info[,c(2,1)])
 
 # To rename column names in an R data frame 
 # using another data frame that contains old and new names
@@ -39,11 +32,7 @@ make_rename_row_df <- function(df, varname, info_vec){
   return(res)
 }
 
-# 워드 화일 페이지 바꾸는 문장 
-wordnewpage <-
-  '```{=openxml}
-<w:p><w:r><w:br w:type="page"/></w:r></w:p>
-```'
+
 
 # flextable option 설정
 set_flextable_defaults(
@@ -179,10 +168,6 @@ print_summary <- function(df, caption_text){
 }
 
 
-school_levels <- c("초등학교", "중학교", "고등학교", NA)
-grade_levels <- c("초등학교_4", "초등학교_5", "초등학교_6", "중학교_1", "중학교_2", "중학교_3", "고등학교_1", "고등학교_2", "고등학교_3", NA)
-sido_levels <- c(names(var_change_vector_SIDO), NA)
-test_levels <- c("심폐지구력", "유연성","근지구력","순발력", NA )
 
 ## summarize by school
 
@@ -318,3 +303,147 @@ cal_percent_by_2 <- function(df) {
   
   return(list(df_n, df_p))
 }
+
+
+####--- 학교별 편균자료를 받나서 연도벼르 학교_학년별 종목의 전체 평균을 구하고 데이믈과 그림 출럭 및 저장 
+
+summ_stat_plot_itemwise_sex_all <- function(df, item_name, sex, filename ) {
+  
+  mytitle <- paste(item_name,"-", sex,"- 전국 평균값", sep = "")
+  
+  df_item_1 <- df %>% dplyr::filter(`선택종목`  == item_name) %>%
+    dplyr::filter(`성별` == sex ) %>%
+    group_by(`년도`, `학교_학년`) %>%
+    summarize( 학교수 =n(), 전국평균 = weighted.mean(`평균`,`학생수`)) %>%
+    ungroup() 
+  
+  df_item_1_tbl <- df_item_1  %>% 
+    dplyr::select(`년도`, `학교_학년`, 전국평균) %>%
+    pivot_wider(names_from = `년도`, values_from = 전국평균, names_prefix = "년도_")
+  
+  g <- df_item_1 %>% ggplot(aes(x = `년도`, y = 전국평균, group = `학교_학년`, color = `학교_학년`, shape= `학교_학년`)) +
+    geom_line() +
+    geom_point(size=2) +
+    scale_shape_manual(values = c(15,16,15,16,17,15,16,17)) + 
+    labs(title = mytitle, x = "년도", y = "평균") +
+    theme_bw() +
+    theme(legend.position = "bottom")
+  
+  ft <- df_item_1_tbl |> 
+    flextable() |> 
+    separate_header() |> 
+    autofit()  |>
+    theme_booktabs(bold_header = TRUE) |>
+    align(align = "center", part = "header", j = 2:13) |> 
+    colformat_num(big.mark = "", decimal.mark = ".") |>
+    colformat_double(digits = 2) |>
+    set_caption( mytitle) |>
+    fix_border_issues()
+  
+  fname_1 <- paste(filename,"-", item_name,"-", sex,".xlsx", sep="")
+  fname_2 <- paste(filename,"-", item_name,"-", sex,".png", sep="")
+  write.xlsx(df_item_1_tbl, file = here("data","outputs",fname_1))
+  ggsave(here("data","outputs",fname_2), plot = g, width = 5, height = 4, units = "in")
+  
+  list(ft, g)
+}
+
+# 주어진 등급 변수(cd_code) 에 대하여 등급에 해당하는 학생수와 비율을 구하는 함수
+
+summ_CD_all <-function(df, cd_code, cd_code_str, school_char){
+  
+  res <- df %>% dplyr::select(SHL_CD_NM, AYR, GRD, SXDS_SC_CD, {{cd_code}}) %>%
+    dplyr::filter(AYR >= 2011) %>%
+    group_by(AYR, GRD, SXDS_SC_CD, {{cd_code}}) %>% 
+    dplyr::summarize( 학생수 = n()) %>%
+    dplyr::mutate(비율 = round(`학생수` *100 / sum(`학생수`),2)) %>%
+    dplyr::filter( !is.na(SXDS_SC_CD )) %>% 
+    dplyr::mutate(school_type = school_char) %>%
+    dplyr::relocate(school_type) %>%
+    dplyr::mutate( SCH_GRD = paste(school_type, GRD, sep = "_") ) %>%
+    dplyr::relocate(SCH_GRD, .before = GRD) %>%
+    dplyr::mutate( SCH_GRD = paste(school_type, GRD, sep = "_") ) %>%
+    dplyr::relocate(SCH_GRD, .before = GRD) %>%
+    dplyr::mutate( cd_type = cd_code_str) %>%
+    dplyr::relocate(cd_type, .after = SXDS_SC_CD) %>%
+    dplyr::rename( CD =  {{cd_code}} ) %>%
+    dplyr::mutate( CD = as.character(CD)) 
+  
+  return(res)
+}
+
+####--- 남여별, 분야별 등급의 요약 데이블과 그림 출럭 및 저장 
+
+
+summ_cd_plot_table_sex_all <- function( df, cd_name, sex, filename ) {
+  
+  df_1 <- df %>% dplyr::filter(`등급유형` == cd_name) %>% dplyr::filter(`성별` == sex) %>% 
+    dplyr::filter(!is.na(`등급`))
+  
+  if (cd_name == "BDFAT_CLA_SCR_NM"){
+    
+    df_1$`등급` <- factor(df_1$`등급`, levels = bmi_levels)
+  }
+  
+  g <-df_1 %>%  ggplot( aes(fill=`등급`, x=factor(`년도`), y=`학생수`)) +
+    geom_bar(position="fill", stat="identity") +
+    xlab("연도") +
+    ylab("등급비율") +
+    theme(legend.position = "bottom")  +
+    facet_wrap(~`학교_학년`, ncol=3)
+  
+  a <- df_1 %>% dplyr::select(`년도`, `학교_학년`, `등급`, `학생수`)
+  
+  df_summ_n <- a %>% pivot_wider(names_from = `등급`, values_from = `학생수`, names_prefix="등급인원수_") %>%
+    dplyr::arrange(`년도`, `학교_학년`)
+  
+  a <- df_1 %>%     dplyr::select(`년도`, `학교_학년`, `등급`, `비율`)
+  
+  df_summ_p <- a %>% pivot_wider(names_from = `등급`, values_from = `비율`, names_prefix="등급비율_") %>%
+    dplyr::arrange(`년도`, `학교_학년`)
+  
+  df_summ <- left_join(df_summ_n, df_summ_p, by=c("년도", "학교_학년"))    
+  
+  
+  table_col <- colnames(df_summ_n) 
+  
+  ft1 <- df_summ_n %>% dplyr::group_by(`년도`) |>
+    dplyr::mutate(is_last_val_in_group = row_number() == max(row_number())) |>
+    flextable(col_keys = table_col ) |> 
+    separate_header() |> 
+    merge_v( j = 1 ) |> 
+    valign(j = 1, valign = "top") |>
+    #autofit()  |>
+    theme_booktabs(bold_header = TRUE) |>
+    align(align = "center", part = "header", j =2:6) |> 
+    colformat_double(digits = 1) |> 
+    colformat_num(big.mark = "", decimal.mark = ".") |>
+    hline(i = ~is_last_val_in_group == TRUE, border = fp_border()) |>
+    width(j = 2:6, 1, unit = "in") |>
+    fix_border_issues()
+  
+  table_col <- colnames(df_summ_p) 
+  
+  ft2 <- df_summ_p %>% dplyr::group_by(`년도`) |>
+    dplyr::mutate(is_last_val_in_group = row_number() == max(row_number())) |>
+    flextable(col_keys = table_col ) |> 
+    separate_header() |> 
+    merge_v( j = 1 ) |> 
+    valign(j = 1, valign = "top") |>
+    #autofit()  |>
+    theme_booktabs(bold_header = TRUE) |>
+    align(align = "center", part = "header", j =2:6) |> 
+    colformat_double(digits = 1) |> 
+    colformat_num(big.mark = "", decimal.mark = ".") |>
+    hline(i = ~is_last_val_in_group == TRUE, border = fp_border()) |>
+    width(j = 2:6, 1, unit = "in") |>
+    fix_border_issues()
+  
+  fname_1 <- paste(filename,"-", cd_name,"-", sex,".xlsx", sep="")
+  fname_2 <- paste(filename,"-", cd_name,"-", sex,".png", sep="")
+  write.xlsx(df_summ, file = here("data","outputs",fname_1))
+  ggsave(here("data","outputs",fname_2), plot = g, width = 5, height = 5, units = "in")
+  
+  list(g, ft1, ft2)
+}
+

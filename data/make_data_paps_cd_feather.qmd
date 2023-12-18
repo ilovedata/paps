@@ -1,0 +1,105 @@
+# 등급 요약 자료 생성
+
+render 하지 말고 project  를 로딩한 후 source 로 실행할 것 
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+
+## PAPS 등급
+
+
+```{r}
+#| message : FALSE
+#| warning : FALSE
+a <- summ_CD_all(df_e_01, PAPS_EVL_CLA_CD, "PAPS_EVL_CLA_CD", "초등학교")
+b <- summ_CD_all(df_m_01, PAPS_EVL_CLA_CD, "PAPS_EVL_CLA_CD", "중학교")
+c <- summ_CD_all(df_h_01, PAPS_EVL_CLA_CD, "PAPS_EVL_CLA_CD", "고등학교")
+
+df_paps_cd <- rbind(a,b,c)
+```
+
+
+## 심폐지구력 등급
+
+
+```{r}
+#| message : FALSE
+#| warning : FALSE
+a <- summ_CD_all(df_e_01, CPM_SAI_EVL_CLA_CD, "CPM_SAI_EVL_CLA_CD", "초등학교")
+b <- summ_CD_all(df_m_01, CPM_SAI_EVL_CLA_CD, "CPM_SAI_EVL_CLA_CD", "중학교")
+c <- summ_CD_all(df_h_01, CPM_SAI_EVL_CLA_CD, "CPM_SAI_EVL_CLA_CD", "고등학교")
+
+df_1_cd <- rbind(a,b,c)
+```
+
+
+## 유연성 등급
+
+
+```{r}
+#| message : FALSE
+#| warning : FALSE
+a <- summ_CD_all(df_e_01, FLX_EVL_CLA_CD, "FLX_EVL_CLA_CD", "초등학교")
+b <- summ_CD_all(df_m_01, FLX_EVL_CLA_CD, "FLX_EVL_CLA_CD", "중학교")
+c <- summ_CD_all(df_h_01, FLX_EVL_CLA_CD, "FLX_EVL_CLA_CD", "고등학교")
+
+df_2_cd <- rbind(a,b,c)
+```
+
+## 근지구력 등급
+
+
+```{r}
+#| message : FALSE
+#| warning : FALSE
+a <- summ_CD_all(df_e_01, MUSL_SAI_EVL_CLA_CD, "MUSL_SAI_EVL_CLA_CD", "초등학교")
+b <- summ_CD_all(df_m_01, MUSL_SAI_EVL_CLA_CD, "MUSL_SAI_EVL_CLA_CD", "중학교")
+c <- summ_CD_all(df_h_01, MUSL_SAI_EVL_CLA_CD, "MUSL_SAI_EVL_CLA_CD", "고등학교")
+
+df_3_cd <- rbind(a,b,c)
+```
+
+## 순발력 등급
+
+
+```{r}
+#| message : FALSE
+#| warning : FALSE
+a <- summ_CD_all(df_e_01, RFLX_EVL_CLA_CD, "RFLX_EVL_CLA_CD", "초등학교")
+b <- summ_CD_all(df_m_01, RFLX_EVL_CLA_CD, "RFLX_EVL_CLA_CD", "중학교")
+c <- summ_CD_all(df_h_01, RFLX_EVL_CLA_CD, "RFLX_EVL_CLA_CD", "고등학교")
+
+df_4_cd <- rbind(a,b,c)
+```
+
+## 비만 등급
+
+
+```{r}
+#| message : FALSE
+#| warning : FALSE
+a <- summ_CD_all(df_e_01, BDFAT_CLA_SCR_NM, "BDFAT_CLA_SCR_NM", "초등학교")
+b <- summ_CD_all(df_m_01, BDFAT_CLA_SCR_NM, "BDFAT_CLA_SCR_NM", "중학교")
+c <- summ_CD_all(df_h_01, BDFAT_CLA_SCR_NM, "BDFAT_CLA_SCR_NM", "고등학교")
+
+df_bmi_cd <- rbind(a,b,c)
+```
+
+## 최종 자료
+```{r}
+
+data_for_save1 <- rbind(df_paps_cd, df_1_cd, df_2_cd, df_3_cd, df_4_cd, df_bmi_cd) %>% ungroup()
+data_for_save1 <- make_rename_col_df(data_for_save1, var_change_vector_PAPS)
+
+data_for_save1$학교_학년 <- factor(data_for_save1$학교_학년, levels = grade_levels)
+
+
+write_feather(data_for_save1, here("data","feather","paps_cd_summ.feather"))
+
+rm(list = ls())
+```
