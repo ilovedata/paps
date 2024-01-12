@@ -1,0 +1,69 @@
+# PAPS의 체력항목 분석 - 심폐지구력 - 왕복오래달리기
+
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+## 왕복오래달리기 
+
+
+```{r}
+#| waring : FALSE
+#| message : FALSE
+aa <- summ_by_item_1var(df_e_01, SHLR_NTS, "초등학교", "왕복오래달리기")
+bb <- summ_by_item_1var(df_m_01, SHLR_NTS, "중학교", "왕복오래달리기")
+cc <- summ_by_item_1var(df_h_01, SHLR_NTS, "고등학교", "왕복오래달리기")
+pp <- combine_summ_by_item_1var(aa[[1]], bb[[1]], cc[[1]], "왕복오래달리기")
+k <- barplot_by_item_1var_year(SHLR_NTS, "왕복오래달리기")
+```
+### 남자
+
+```{r}
+pp[[3]]
+```
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+
+```{r}
+pp[[1]]
+```
+
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+### 여자
+
+```{r}
+pp[[4]]
+```
+
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+
+```{r}
+pp[[2]]
+```
+
+
+```{r results='asis'}
+if(isword) cat("\n", wordnewpage, "\n")
+```
+
+
+```{r}
+k
+```
+
+

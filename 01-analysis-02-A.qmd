@@ -19,12 +19,16 @@ df_cd <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = T
 ## 심폐지구력 등급- 남자
 
 ```{r}
-res <- summ_cd_plot_table_sex_all(df_cd, "CPM_SAI_EVL_CLA_CD", "남성", "chapter3")
+res <- summ_cd_plot_table_sex_all(df_cd, "CPM_SAI_EVL_CLA_CD", "남성", "심폐지구력등급")
 ```
 
 ```{r}
-res[[1]]
+for (i in 1:length(grade_levels)) {
+  print(res[[1]][[i]])
+}
 ```
+
+
 
 ```{r results='asis'}
 if(isword) cat("\n", wordnewpage, "\n")
@@ -46,11 +50,13 @@ res[[3]]
 ## 심폐지구력 등급 - 여자
 
 ```{r}
-res <- summ_cd_plot_table_sex_all(df_cd, "CPM_SAI_EVL_CLA_CD", "여성", "chapter3")
+res <- summ_cd_plot_table_sex_all(df_cd, "CPM_SAI_EVL_CLA_CD", "여성", "심폐지구력등급")
 ```
 
 ```{r}
-res[[1]]
+for (i in 1:length(grade_levels)) {
+  print(res[[1]][[i]])
+}
 ```
 
 ```{r results='asis'}

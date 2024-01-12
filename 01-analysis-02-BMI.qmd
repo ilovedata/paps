@@ -19,7 +19,7 @@ df_cd <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = T
 ## 비만 등급- 남자
 
 ```{r}
-res <- summ_cd_plot_table_sex_all(df_cd, "BDFAT_CLA_SCR_NM", "남성", "chapter3")
+res <- summ_cd_plot_table_sex_all(df_cd, "BDFAT_CLA_SCR_NM", "남성", "비만등급")
 ```
 
 ```{r}
@@ -46,7 +46,7 @@ res[[3]]
 ## 비만 등급 - 여자
 
 ```{r}
-res <- summ_cd_plot_table_sex_all(df_cd, "BDFAT_CLA_SCR_NM", "여성", "chapter3")
+res <- summ_cd_plot_table_sex_all(df_cd, "BDFAT_CLA_SCR_NM", "여성", "비만등급")
 ```
 
 ```{r}

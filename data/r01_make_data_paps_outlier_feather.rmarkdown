@@ -1,0 +1,117 @@
+# 이상치 제거 및 자료 변환
+
+
+
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message=FALSE)
+library(here)           # file pathways
+source(here::here("_common", "common.R"))
+source(here::here("_common", "preprocess.R"))
+```
+
+
+
+## 주의사항
+
+- render 하지 말고 project  를 로딩한 후 source 로 실행맇 것 
+
+- 이상치 제거 및 자료 변환을 위한 코드
+- 다음 자료를 읽어서 
+  + E_final_ori.feather
+  + M_final_ori.feather
+  + H_final_ori.feather
+- 이상치 제거 및 자료 변환을 수행한 후 다음 자료를 생성한다. 
+  + E_final.feather
+  + M_final.feather
+  + H_final.feather
+  
+
+## 원자료 읽기
+
+
+
+```{r}
+## read arrow data
+dirpath <- here("data","feather","E_final_ori.feather")
+df_e_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+dirpath <- here("data","feather","M_final_ori.feather")
+df_m_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+dirpath <- here("data","feather","H_final_ori.feather")
+df_h_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+
+df_e_01 <- df_e_01[,1:31]
+df_m_01 <- df_m_01[,1:31]
+df_h_01 <- df_h_01[,1:31]
+```
+
+
+
+
+## 자료 변환 및 이상치 제거 
+
+- 왕복오래달리기(페이서,셔틀런)
+  + 초등 15m
+  + 중고등 20m
+
+- 오래달리기-걷기 측정방법
+  + 초등 1000m
+  + 중고등 여학생 1200m
+  + 중고등 남학생 1600m
+
+
+- 팔굽혀펴기(회)(남)
+  + (무릎대고)팔굽혀펴기(회)(여)
+
+
+### 자료 변환
+
+- `분.초` 형식의 자료를 `초`로 변환한다.
+  
+
+
+```{r}
+
+df_e_01 <- df_e_01 %>% dplyr::mutate(MIN_SEC_LRW_HR = convert_real_to_sec(MIN_SEC_LRW_HR)) %>% 
+  dplyr::mutate(R50M_REC_HR = convert_real_to_sec(R50M_REC_HR)) 
+
+df_m_01 <- df_m_01 %>% dplyr::mutate(MIN_SEC_LRW_HR = convert_real_to_sec(MIN_SEC_LRW_HR)) %>% 
+  dplyr::mutate(R50M_REC_HR = convert_real_to_sec(R50M_REC_HR)) 
+
+df_h_01 <- df_h_01 %>% dplyr::mutate(MIN_SEC_LRW_HR = convert_real_to_sec(MIN_SEC_LRW_HR)) %>% 
+  dplyr::mutate(R50M_REC_HR = convert_real_to_sec(R50M_REC_HR)) 
+```
+
+
+
+
+### 이상치 제거 
+
+
+
+```{r}
+
+var_outlier_info[3,"min"] <- convert_real_to_sec(var_outlier_info[3,"min"])
+var_outlier_info[4,"min"] <- convert_real_to_sec(var_outlier_info[4,"min"])
+var_outlier_info[5,"min"] <- convert_real_to_sec(var_outlier_info[5,"min"])
+
+var_outlier_info[3,"max"] <- convert_real_to_sec(var_outlier_info[3,"max"])
+var_outlier_info[4,"max"] <- convert_real_to_sec(var_outlier_info[4,"max"])
+var_outlier_info[5,"max"] <- convert_real_to_sec(var_outlier_info[5,"max"])
+
+var_outlier_info[13,"min"] <- convert_real_to_sec(var_outlier_info[13,"min"])
+var_outlier_info[13,"max"] <- convert_real_to_sec(var_outlier_info[13,"max"])
+
+
+      
+df_e_01 <- delete_outlier(df_e_01, "초등", var_outlier_info)
+df_m_01 <- delete_outlier(df_m_01, "중등", var_outlier_info)
+df_h_01 <- delete_outlier(df_h_01, "고등", var_outlier_info)
+
+write_feather(df_e_01, here("data","feather","E_final.feather"))
+write_feather(df_m_01, here("data","feather","M_final.feather"))
+write_feather(df_h_01, here("data","feather","H_final.feather"))
+
+#rm(list = ls())
+```
+

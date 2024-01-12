@@ -9,6 +9,8 @@ library(here)           # file pathways
 이 보고서는 PAPS 자료의 요약과 분석 정보를 제공한다.
 
 
+
+
 ## 화일 구조 
 
 - `_common` 폴더에는 분석에 필요한 함수들이 저장되어 있다.
@@ -22,6 +24,7 @@ library(here)           # file pathways
 - `data` 폴더에는 분석에 필요한 자료들이 저장되어 있다.
   + `feather` 폴더에는 초중등 자료가 저장되어 있다(`E_final,feather`, `M_final.feather`, `H_final,feather`)
   + `feather` 폴더에는 파생된 자료도 저장된다.
+
 
 
 - 파생자료 정보 

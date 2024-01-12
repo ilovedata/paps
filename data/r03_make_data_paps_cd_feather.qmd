@@ -8,6 +8,21 @@ library(here)           # file pathways
 source(here::here("_common", "common.R"))
 source(here::here("_common", "preprocess.R"))
 ```
+## 원자료 읽기
+
+```{r}
+## read arrow data
+dirpath <- here("data","feather","E_final.feather")
+df_e_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+dirpath <- here("data","feather","M_final.feather")
+df_m_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+dirpath <- here("data","feather","H_final.feather")
+df_h_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+
+#df_e_01 <- df_e_01[,1:31]
+#df_m_01 <- df_m_01[,1:31]
+#df_h_01 <- df_h_01[,1:31]
+```
 
 
 ## PAPS 등급
@@ -98,6 +113,7 @@ data_for_save1 <- make_rename_col_df(data_for_save1, var_change_vector_PAPS)
 
 data_for_save1$학교_학년 <- factor(data_for_save1$학교_학년, levels = grade_levels)
 
+data_for_save1 <- data_for_save1 %>% dplyr::filter(!is.na(등급))
 
 write_feather(data_for_save1, here("data","feather","paps_cd_summ.feather"))
 

@@ -17,6 +17,7 @@ library(showtext)
 library(arsenal)
 library(arrow)
 library(lubridate)
+library(rlang)
 #library(gamlss)
 
 # Nanum Pen Script 는 선택
@@ -29,6 +30,7 @@ not_any_na <- function(x) all(!is.na(x))
 ## var_info
 
 var_paps_info <- read_excel(here("data","PAPS_col_definition.xlsx"))
+var_outlier_info <- read_excel(here("data","PAPS_col_outlier_treat.xlsx"))
 sido_info <- read_excel(here("data","sido_code.xlsx"))
 
 var_change_vector_PAPS <- deframe(var_paps_info[,c(4,2)])
@@ -42,6 +44,8 @@ grade_levels <- c("초등학교_4", "초등학교_5", "초등학교_6", "중학�
 sido_levels <- c(names(var_change_vector_SIDO))
 test_levels <- c("심폐지구력", "유연성","근지구력","순발력" )
 bmi_levels <- c("마름", "정상", "과체중", "경도비만", "고도비만")
+
+test_item_levels <- var_paps_info$var_ko_s[c(11,10,9,14,15,20,19,18,23,24,5,6,27)]
 
 # 워드 화일 페이지 바꾸는 문장 
 wordnewpage <-

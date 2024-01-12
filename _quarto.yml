@@ -1,26 +1,40 @@
 project:
   type: book
   
-execute:
-  freeze: auto  # re-render only when source changes  
+#execute:
+#  freeze: auto  # re-render only when source changes  
 
 book:
   title: "PAPS analysis"
   author: "Yonghee Lee"
-  date: "12/10/2023"
+  date: now
+  date-format: YYYY-MM-DD-HH:mm:ss
   chapters:
     - index.qmd
-    - 01-analysis-00.qmd
-    - 01-analysis-01-A.qmd
-    - 01-analysis-01-B.qmd
-    - 01-analysis-01-C.qmd
-    - 01-analysis-01-D.qmd
+    - history.qmd
+#    - 01-analysis-00.qmd
+#    - 01-analysis-01-A-rev.qmd
+#    - 01-analysis-01-B-rev.qmd
+#    - 01-analysis-01-A-rev.qmd
+#    - 01-analysis-01-C-rev.qmd
+#    - 01-analysis-01-D-rev.qmd
+#    - 01-analysis-01-E-rev.qmd
+#    - 01-analysis-01-F-rev.qmd
+#    - 01-analysis-01-G-rev.qmd
+#    - 01-analysis-01-H-rev.qmd
+#    - 01-analysis-01-I-rev.qmd
+#    - 01-analysis-01-J-rev.qmd
+#    - 01-analysis-01-K-rev.qmd
+#    - 01-analysis-01-L-rev.qmd
+#    - 01-analysis-01-M-rev.qmd
     - 01-analysis-02.qmd
     - 01-analysis-02-A.qmd
     - 01-analysis-02-B.qmd
     - 01-analysis-02-C.qmd
     - 01-analysis-02-D.qmd
     - 01-analysis-02-BMI.qmd
+#    - 01-analysis-03-lifecycle_M.qmd
+#    - 01-analysis-03-lifecycle_F.qmd
     - references.qmd
 
 bibliography: references.bib

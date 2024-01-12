@@ -1,4 +1,4 @@
-# PAPS 등급
+# PAPS의 체력항목 분석 - 근력근지구력 - 악력
 
 
 ```{r warning=FALSE, echo=FALSE, message=FALSE}
@@ -8,63 +8,62 @@ source(here::here("_common", "common.R"))
 source(here::here("_common", "preprocess.R"))
 ```
 
+## 악력 
 
-### 자료 읽기
 
 ```{r}
-dirpath <- here("data","feather","paps_cd_summ.feather")
-df_cd <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+#| waring : FALSE
+#| message : FALSE
+aa <- summ_by_item_1var(df_e_01, GRIP_NMVL, "초등학교", "악력")
+bb <- summ_by_item_1var(df_m_01, GRIP_NMVL, "중학교", "악력")
+cc <- summ_by_item_1var(df_h_01, GRIP_NMVL, "고등학교", "악력")
+pp <- combine_summ_by_item_1var(aa[[1]], bb[[1]], cc[[1]], "악력")
+k <- barplot_by_item_1var_year(GRIP_NMVL, "악력")
 ```
-
-## PAPS 등급 - 남자
-
-```{r}
-res <- summ_cd_plot_table_sex_all(df_cd, "PAPS_EVL_CLA_CD", "남성", "PAPS등급")
-```
+### 남자
 
 ```{r}
-res[[1]]
+pp[[3]]
 ```
 
 ```{r results='asis'}
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+
 ```{r}
-res[[2]]
+pp[[1]]
 ```
+
 
 ```{r results='asis'}
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
-```{r}
-res[[3]]
-```
-
-
-## PAPS 등급 - 여자
+### 여자
 
 ```{r}
-res <- summ_cd_plot_table_sex_all(df_cd, "PAPS_EVL_CLA_CD", "여성", "PAPS등급")
+pp[[4]]
 ```
 
-```{r}
-res[[1]]
-```
 
 ```{r results='asis'}
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+
 ```{r}
-res[[2]]
+pp[[2]]
 ```
+
 
 ```{r results='asis'}
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+
 ```{r}
-res[[3]]
+k
 ```
+
+
