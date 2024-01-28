@@ -12,6 +12,9 @@ df_m_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap =
 dirpath <- here("data","feather","H_final.feather")
 df_h_01 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
 
+dirpath <- here("data","feather","physical100.feather")
+df_100 <- read_feather(dirpath, col_select = NULL, as_data_frame = TRUE, mmap = TRUE)
+
 #df_e_01 <- df_e_01[,1:31]
 #df_m_01 <- df_m_01[,1:31]
 #df_h_01 <- df_h_01[,1:31]
@@ -87,6 +90,37 @@ set_flextable_defaults(
 #  }
 )
 
+# calculate percent and freq by year and school
+
+cal_percent_by_2 <- function(df) { 
+  
+  a <-  df %>% dplyr::select(`년도`, `시도`, `학교`,`체력요인`, `선택종목`,`학교명`,`성별`, `학교_학년`) %>%
+    dplyr::filter(`년도` >= 2009) %>%
+    dplyr::arrange(`년도`, `시도`, `학교`,`체력요인`, `선택종목`,`학교명`,`성별`, `학교_학년` ) %>%
+    group_by(`년도`, `시도`, `학교`, `체력요인`, `선택종목`,`학교명`) %>% 
+    slice_head(n = 1) %>% 
+    ungroup() %>%
+    group_by(`년도`, `학교`,`체력요인`, `선택종목`) %>%
+    summarise( 학교수 =n() ,.groups = 'drop')   %>%   
+    group_by(`년도`, `학교`,`체력요인`) %>%
+    dplyr::mutate(비율 = round(`학교수` *100 / sum(`학교수`),2)) %>%
+    dplyr::filter(!is.na(`체력요인`)) %>% 
+    dplyr::ungroup() 
+  
+  df_n <- a %>% dplyr::select(-`비율`)  %>%
+    dplyr::arrange(`학교`,`년도`) %>%
+    pivot_wider(names_from = c( `체력요인`, `선택종목`), values_from = `학교수`) %>%
+    dplyr::relocate(`학교`)
+  
+  df_p <- a %>% dplyr::select(-`학교수`)  %>%
+    dplyr::arrange(`학교`,`년도`) %>%
+    pivot_wider(names_from = c(`체력요인`, `선택종목`), values_from = `비율`)  %>%
+    dplyr::relocate(`학교`)
+  
+  return(list(df_n, df_p, a))
+  return(a)
+}
+
 
 # flextable 을 만들어 주는 함수
 # loc_center: 헤더(header) 컬럼 중에서 label 을 중앙에 위치하게 하는 컬럼위치 
@@ -149,7 +183,27 @@ make_table_2 <- function(df, filename) {
   ft
 }
 
+make_table_2_plot <- function(df, sch, item ) {
 
+pl <- df %>% dplyr::filter(`학교` ==  sch & `체력요인` == item ) %>%
+  ggplot(aes(x = `년도`, y = `비율`, group = `선택종목`, color = `선택종목`, shape= `선택종목`)) +
+  geom_line(alpha = 1) +
+  geom_point(size=2) + 
+  ylim(0,100) +
+  labs(title = paste(sch,"-", item), y="비율(%)" ) +
+  theme(plot.title = element_text(size=30),
+        axis.text=element_text(size=40),
+        axis.title=element_text(size=40),
+        strip.text.x = element_text(size = 40,face="bold"),
+        legend.text=element_text(size=40,face="bold"),
+        legend.title=element_text(size=40,face="bold")) 
+
+ fname_1 <- paste("체력요인선택그림-",sch,"-",item,".png", sep="")
+ ggsave(here("data","outputs",fname_1), plot = pl, width = 10, height = 5, units = "in")
+
+  return(pl)
+
+}
 
 # 현재 프로젝트 폴더를 기준으로 폴더명을 정의  
 
@@ -501,33 +555,6 @@ summ_by_school_2var <- function(df, var1, var2, school_char, test_char ) {
   
 }
 
-# calculate percent and freq by year and school
-
-cal_percent_by_2 <- function(df) { 
-
-  a <-  df %>% dplyr::select(`년도`, `시도`, `학교`,`체력요인`, `선택종목`,`학교명`,`성별`, `학교_학년`) %>%
-    dplyr::filter(`년도` >= 2009) %>%
-    dplyr::arrange(`년도`, `시도`, `학교`,`체력요인`, `선택종목`,`학교명`,`성별`, `학교_학년` ) %>%
-    group_by(`년도`, `시도`, `학교`, `체력요인`, `선택종목`,`학교명`) %>% 
-    slice_head(n = 1) %>% 
-    ungroup() %>%
-    group_by(`년도`, `학교`,`체력요인`, `선택종목`) %>%
-    summarise( 학교수 =n() ,.groups = 'drop')   %>%   
-    dplyr::mutate(비율 = round(`학교수` *100 / sum(`학교수`),2))
-
-  df_n <- a %>% dplyr::select(-`비율`)  %>%
-    dplyr::arrange(`학교`,`년도`) %>%
-    pivot_wider(names_from = c( `체력요인`, `선택종목`), values_from = `학교수`) %>%
-    dplyr::relocate(`학교`)
-
-  df_p <- a %>% dplyr::select(-`학교수`)  %>%
-    dplyr::arrange(`학교`,`년도`) %>%
-    pivot_wider(names_from = c(`체력요인`, `선택종목`), values_from = `비율`)  %>%
-    dplyr::relocate(`학교`)
-  
-  return(list(df_n, df_p))
-  return(a)
-}
 
 
 ####--- 학교별 편균자료를 받나서 연도벼르 학교_학년별 종목의 전체 평균을 구하고 데이믈과 그림 출럭 및 저장 

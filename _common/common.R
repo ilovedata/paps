@@ -33,9 +33,12 @@ var_paps_info <- read_excel(here("data","PAPS_col_definition.xlsx"))
 var_outlier_info <- read_excel(here("data","PAPS_col_outlier_treat.xlsx"))
 sido_info <- read_excel(here("data","sido_code.xlsx"))
 
+filepath <- here("data", "physical100_item_20240127.csv")
+phy100_colnames  <- read_csv(filepath)
+
 var_change_vector_PAPS <- deframe(var_paps_info[,c(4,2)])
 var_change_vector_SIDO <- deframe(sido_info[,c(2,1)])
-
+var_change_vector_phy100<- toupper(deframe(phy100_colnames[,c(3,1)]))
 
 # 범주형 레벨
 

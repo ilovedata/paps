@@ -12,7 +12,7 @@ book:
   chapters:
     - index.qmd
     - history.qmd
-#    - 01-analysis-00.qmd
+    - 01-analysis-00.qmd
 #    - 01-analysis-01-A-rev.qmd
 #    - 01-analysis-01-B-rev.qmd
 #    - 01-analysis-01-A-rev.qmd
@@ -27,12 +27,12 @@ book:
 #    - 01-analysis-01-K-rev.qmd
 #    - 01-analysis-01-L-rev.qmd
 #    - 01-analysis-01-M-rev.qmd
-    - 01-analysis-02.qmd
-    - 01-analysis-02-A.qmd
-    - 01-analysis-02-B.qmd
-    - 01-analysis-02-C.qmd
-    - 01-analysis-02-D.qmd
-    - 01-analysis-02-BMI.qmd
+##    - 01-analysis-02.qmd
+##    - 01-analysis-02-A.qmd
+##    - 01-analysis-02-B.qmd
+##    - 01-analysis-02-C.qmd
+##    - 01-analysis-02-D.qmd
+##    - 01-analysis-02-BMI.qmd
 #    - 01-analysis-03-lifecycle_M.qmd
 #    - 01-analysis-03-lifecycle_F.qmd
     - references.qmd

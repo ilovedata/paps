@@ -1,4 +1,4 @@
-# PAPS의 종목 선택
+# PAPS의 종목 선택 
 
 
 ```{r warning=FALSE, echo=FALSE, message=FALSE}
@@ -10,6 +10,8 @@ source(here::here("_common", "preprocess.R"))
 
 
 ## 종목 선택 현황
+
+- **모든 시도 자료를 이용한 최종 요약**
 
 - 2010년 이전 자료는 학교의 수가 상대적으로 적어서 비교가 어려우므로 2011년 부터 2022년 까지  12년 자료를 분석
 - 각 학교에서 해당 년도에 선택한 종목은 다음과 같은 기준으로 정함
@@ -87,6 +89,17 @@ make_table_2(tbl_e_p, "chap1-tbl_e_p")
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+
+### 초등학교 - 연도별 선택 종목 변화
+
+```{r}
+make_table_2_plot(tbl_0[[3]], school_levels[1], test_levels[1])
+make_table_2_plot(tbl_0[[3]], school_levels[1], test_levels[2])
+make_table_2_plot(tbl_0[[3]], school_levels[1], test_levels[3])
+make_table_2_plot(tbl_0[[3]], school_levels[1], test_levels[4])
+```
+
+
 ## 중학교
 
 ### 중학교 - 학교 수
@@ -116,6 +129,18 @@ make_table_2(tbl_e_p,  "chap1-tbl_m_p")
 ```{r results='asis'}
 if(isword) cat("\n", wordnewpage, "\n")
 ```
+
+
+
+### 중학교 - 연도별 선택 종목 변화
+
+```{r}
+make_table_2_plot(tbl_0[[3]], school_levels[2], test_levels[1])
+make_table_2_plot(tbl_0[[3]], school_levels[2], test_levels[2])
+make_table_2_plot(tbl_0[[3]], school_levels[2], test_levels[3])
+make_table_2_plot(tbl_0[[3]], school_levels[2], test_levels[4])
+```
+
 
 ## 고등학교
 
@@ -147,4 +172,14 @@ make_table_2(tbl_e_p,  "chap1-tbl_h_p")
 if(isword) cat("\n", wordnewpage, "\n")
 ```
 
+
+
+### 고등학교 - 연도별 선택 종목 변화
+
+```{r}
+make_table_2_plot(tbl_0[[3]], school_levels[3], test_levels[1])
+make_table_2_plot(tbl_0[[3]], school_levels[3], test_levels[2])
+make_table_2_plot(tbl_0[[3]], school_levels[3], test_levels[3])
+make_table_2_plot(tbl_0[[3]], school_levels[3], test_levels[4])
+```
 
